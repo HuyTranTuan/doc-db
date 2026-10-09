@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Mastery: RDBMS & NoSQL</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230f172a'%3E%3Cpath d='M12 2C6.48 2 2 4.02 2 6.5s4.48 4.5 10 4.5 10-2.02 10-4.5S17.52 2 12 2zm0 6.5c-4.41 0-8-1.57-8-3.5S7.59 1.5 12 1.5s8 1.57 8 3.5-3.59 3.5-8 3.5zm0 2.5c-5.52 0-10-2.02-10-4.5v3c0 2.48 4.48 4.5 10 4.5s10-2.02 10-4.5v-3c0 2.48-4.48 4.5-10 4.5zm0 5c-5.52 0-10-2.02-10-4.5v3c0 2.48 4.48 4.5 10 4.5s10-2.02 10-4.5v-3c0 2.48-4.48 4.5-10 4.5z'/%3E%3C/svg%3E" type="image/svg+xml">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        code, pre { font-family: 'Fira Code', monospace; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Glow effects for sections */
+        .glow-mysql { box-shadow: 0 0 15px rgba(0, 117, 143, 0.15); }
+        .glow-pg { box-shadow: 0 0 15px rgba(51, 103, 145, 0.15); }
+        .glow-sqlserver { box-shadow: 0 0 15px rgba(204, 41, 43, 0.15); }
+        .glow-mongo { box-shadow: 0 0 15px rgba(71, 162, 72, 0.15); }
+        
+        .glow-redis { box-shadow: 0 0 15px rgba(220, 56, 45, 0.15); }
+        .glow-graph { box-shadow: 0 0 15px rgba(79, 70, 229, 0.15); }
+        .glow-monitor { box-shadow: 0 0 15px rgba(249, 115, 22, 0.15); }
+        
+        .nav-link.active-overview { color: #475569; font-weight: 600; border-left-color: #475569; background-color: #f1f5f9;}
+        .nav-link.active-mysql { color: #00758F; font-weight: 600; border-left-color: #00758F; background-color: #e0f2fe;}
+        .nav-link.active-pg { color: #336791; font-weight: 600; border-left-color: #336791; background-color: #dbeafe;}
+        .nav-link.active-sqlserver { color: #CC292B; font-weight: 600; border-left-color: #CC292B; background-color: #fee2e2;}
+        .nav-link.active-mongo { color: #47A248; font-weight: 600; border-left-color: #47A248; background-color: #dcfce7;}
+        .nav-link.active-dbeaver { color: #7c2d12; font-weight: 600; border-left-color: #7c2d12; background-color: #ffedd5;}
+        .nav-link.active-redis { color: #DC382D; font-weight: 600; border-left-color: #DC382D; background-color: #fef2f2;}
+        .nav-link.active-graph { color: #4f46e5; font-weight: 600; border-left-color: #4f46e5; background-color: #e0e7ff;}
+        .nav-link.active-monitor { color: #ea580c; font-weight: 600; border-left-color: #ea580c; background-color: #ffedd5;}
+        .nav-link.active-kafka { color: #0d9488; font-weight: 600; border-left-color: #0d9488; background-color: #ccfbf1;}
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-slate-300">
+
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 bg-opacity-90 backdrop-blur-sm">
+        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <svg class="w-8 h-8 text-slate-800" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 4.02 2 6.5s4.48 4.5 10 4.5 10-2.02 10-4.5S17.52 2 12 2zm0 6.5c-4.41 0-8-1.57-8-3.5S7.59 1.5 12 1.5s8 1.57 8 3.5-3.59 3.5-8 3.5zm0 2.5c-5.52 0-10-2.02-10-4.5v3c0 2.48 4.48 4.5 10 4.5s10-2.02 10-4.5v-3c0 2.48-4.48 4.5-10 4.5zm0 5c-5.52 0-10-2.02-10-4.5v3c0 2.48 4.48 4.5 10 4.5s10-2.02 10-4.5v-3c0 2.48-4.48 4.5-10 4.5z"/>
+                </svg>
+                <span class="text-2xl font-bold text-slate-800 tracking-tight">Database<span class="text-slate-500">Mastery</span></span>
+                <span class="hidden sm:inline-block px-2 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded">SQL & NoSQL</span>
+            </div>
+            <div class="text-sm text-slate-500 font-medium">Truy vấn, Tối ưu & Quản trị</div>
+        </div>
+    </header>
+
+    <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-full lg:w-72 flex-shrink-0 hidden lg:block">
+            <nav class="sticky top-24 flex flex-col gap-4 overflow-y-auto max-h-[calc(100vh-8rem)] pb-10 pr-2">
+                
+                <!-- Overview -->
+                <div>
+                    <h3 class="font-bold text-slate-700 text-sm uppercase tracking-wider mb-2 flex items-center gap-2">🧭 Tổng Quan</h3>
+                    <div class="flex flex-col gap-1 border-l-2 border-slate-200 pl-3">
+                        <a href="#overview-comparison" class="nav-link active-overview block py-2 px-3 text-sm text-slate-600 hover:text-slate-900 rounded transition-colors" data-group="overview">1. So sánh 4 "Ông lớn"</a>
+                    </div>
+                </div>
+
+                <!-- MySQL -->
+                <div class="mt-2">
+                    <h3 class="font-bold text-[#00758F] text-sm uppercase tracking-wider mb-2 flex items-center gap-2">🐬 MySQL</h3>
+                    <div class="flex flex-col gap-1 border-l-2 border-slate-200 pl-3">
+                        <a href="#mysql-basics" class="nav-link block py-2 px-3 text-sm text-slate-600 hover:text-[#00758F] rounded transition-colors" data-group="mysql">2. Lệnh cơ bản & Tối ưu hóa</a>
+                        <a href="#mysql-admin" class="nav-link block py-2 px-3 text-sm text-slate-600 hover:text-[#00758F] rounded transition-colors" data-group="mysql">3. Quản trị & Backup</a>
+                    </div>
+                </div>
+
+                <!-- PostgreSQL -->
+                <div class="mt-2">
+                    <h3 class="font-bold text-[#336791] text-sm uppercase tracking-wider mb-2 flex items-center gap-2">🐘 PostgreSQL</h3>
+                    <div class="flex flex-col gap-1 border-l-2 border-slate-200 pl-3">
+                        <a href="#pg-advanced" class="nav-link block py-2 px-3 text-sm text-slate-600 hover:text-[#336791] rounded transition-colors" data-group="pg">4. Tính năng "Sát thủ" (JSON, Array)</a>
+                        <a href="#pg-admin" class="nav-link block py-2 px-3 text-sm text-slate-600 hover:text-[#336791] rounded transition-colors" data-group="pg">5. Chiến lược thực thi (EXPLAIN)</a>
+                    </div>
+                </div>
+
+                <!-- SQL Server -->
+                <div class="mt-2">
+                    <h3 class="font-bold text-[#CC292B] text-sm uppercase tracking-wider mb-2 flex items-center gap-2">🪟 SQL Server</h3>
+                    <div class="flex flex-col gap-1 border-l-2 border-slate-200 pl-3">
+                        <a href="#sqlserver-tsql" class="nav-link block py-2 px-3 text-sm text-slate-600 hover:text-[#CC292B] rounded transition-colors" data-group="sqlserver">6. T-SQL & Cú pháp đặc thù</a>
+                        <a href="#sqlserver-admin" class="nav-link block py-2 px-3 text-sm text-slate-600 hover:text-[#CC292B] rounded transition-colors" data-group="sqlserver">7. CTE, Procedure & Monitor</a>
+                    </div>
+                </div>
+
+                <!-- MongoDB -->
+                <div class="mt-2">
+                    <h3 class="font-bold text-[#47A248] text-sm uppercase tracking-wider mb-2 flex items-center gap-2">🍃 MongoDB</h3>
+                    <div class="flex flex-col gap-1 border-l-2 border-slate-200 pl-3">
+                        <a href="#mongo-basics" class="nav-link block py-2 px-3 text-sm text-slate-600 hover:text-[#47A248] rounded transition-colors" data-group="mongo">8. Tư duy NoSQL & Lệnh cơ bản</a>
+                        <a href="#mongo-aggregate" class="nav-link block py-2 px-3 text-sm text-slate-600 hover:text-[#47A248] rounded transition-colors" data-group="mongo">9. Aggregation Pipeline (Tuyệt chiêu)</a>
+                    </div>
+                </div>
+
+                <!-- Tools & Optimization -->
+                <div class="mt-2">
+                    <h3 class="font-bold text-amber-700 text-sm uppercase tracking-wider mb-2 flex items-center gap-2">🦫 Tools & Tối ưu</h3>
+                    <div class="flex flex-col gap-1 border-l-2 border-slate-200 pl-3">
+                        <a href="#dbeaver" class="nav-link block py-2 px-3 text-sm text-slate-600 hover:text-amber-700 rounded transition-colors" data-group="dbeaver">10. DBeaver & Các Tool Khác</a>
+                        <a href="#db-optimization" class="nav-link block py-2 px-3 text-sm text-slate-600 hover:text-amber-700 rounded transition-colors" data-group="dbeaver">11. Tối ưu, Nâng cao & Lệnh TRUNCATE</a>
+                    </div>
+                </div>
+
+                <!-- Redis -->
+                <div class="mt-2">
+                    <h3 class="font-bold text-red-600 text-sm uppercase tracking-wider mb-2 flex items-center gap-2">⚡ Redis Cache</h3>
+                    <div class="flex flex-col gap-1 border-l-2 border-slate-200 pl-3">
+                        <a href="#redis-basics" class="nav-link block py-2 px-3 text-sm text-slate-600 hover:text-red-600 rounded transition-colors" data-group="redis">12. Kiến trúc & Vận hành Cache</a>
+                    </div>
+                </div>
+
+                <!-- Graph DB -->
+                <div class="mt-2">
+                    <h3 class="font-bold text-indigo-600 text-sm uppercase tracking-wider mb-2 flex items-center gap-2">🕸️ Graph Database</h3>
+                    <div class="flex flex-col gap-1 border-l-2 border-slate-200 pl-3">
+                        <a href="#graph-basics" class="nav-link block py-2 px-3 text-sm text-slate-600 hover:text-indigo-600 rounded transition-colors" data-group="graph">13. Neo4j & Tư duy đồ thị</a>
+                    </div>
+                </div>
+
+                <!-- Monitoring -->
+                <div class="mt-2">
+                    <h3 class="font-bold text-orange-600 text-sm uppercase tracking-wider mb-2 flex items-center gap-2">📊 Giám sát (Monitoring)</h3>
+                    <div class="flex flex-col gap-1 border-l-2 border-slate-200 pl-3">
+                        <a href="#monitor-basics" class="nav-link block py-2 px-3 text-sm text-slate-600 hover:text-orange-600 rounded transition-colors" data-group="monitor">14. Prometheus & Grafana</a>
+                    </div>
+                </div>
+
+                <!-- Kafka -->
+                <div class="mt-2">
+                    <h3 class="font-bold text-teal-600 text-sm uppercase tracking-wider mb-2 flex items-center gap-2">🚀 Message Queue</h3>
+                    <div class="flex flex-col gap-1 border-l-2 border-slate-200 pl-3">
+                        <a href="#kafka-basics" class="nav-link block py-2 px-3 text-sm text-slate-600 hover:text-teal-600 rounded transition-colors" data-group="kafka">15. Kafka & Bức tranh Message Broker</a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="flex-1 min-w-0 pb-32">
+            
+            <!-- OVERVIEW SECTION -->
+            <div class="mb-4 bg-slate-100 text-slate-800 p-4 rounded-xl border border-slate-300 flex items-start gap-4">
+                <div class="text-3xl">🧭</div>
+                <div>
+                    <h2 class="font-bold text-lg mb-1">Bức Tranh Tổng Thể: Khi nào dùng Database nào?</h2>
+                    <p class="text-sm">Không có Database nào là hoàn hảo nhất, chỉ có sự lựa chọn phù hợp nhất cho dự án của bạn. Việc hiểu rõ điểm mạnh yếu giúp bạn thiết kế hệ thống bền vững ngay từ đầu.</p>
+                </div>
+            </div>
+
+            <section id="overview-comparison" class="mb-14 scroll-mt-24">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-50 border-b border-slate-200">
+                            <tr>
+                                <th class="p-4 font-bold text-slate-800 border-r border-slate-200 w-1/4">Đặc điểm</th>
+                                <th class="p-4 font-bold text-[#00758F] border-r border-slate-200">MySQL</th>
+                                <th class="p-4 font-bold text-[#336791] border-r border-slate-200">PostgreSQL</th>
+                                <th class="p-4 font-bold text-[#CC292B] border-r border-slate-200">SQL Server</th>
+                                <th class="p-4 font-bold text-[#47A248]">MongoDB</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr>
+                                <td class="p-4 border-r border-slate-200 font-semibold bg-slate-50 text-xs">Loại CSDL</td>
+                                <td class="p-4 border-r border-slate-200">Relational (SQL)</td>
+                                <td class="p-4 border-r border-slate-200">Relational / Object-Relational</td>
+                                <td class="p-4 border-r border-slate-200">Relational (SQL)</td>
+                                <td class="p-4">NoSQL (Document)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 border-r border-slate-200 font-semibold bg-slate-50 text-xs">Điểm mạnh tuyệt đối</td>
+                                <td class="p-4 border-r border-slate-200 text-xs leading-relaxed">Phổ biến, nhẹ, dễ cài đặt. Đọc (Read) siêu nhanh. Hệ sinh thái khổng lồ (PHP/Laravel).</td>
+                                <td class="p-4 border-r border-slate-200 text-xs leading-relaxed">"Oracle mã nguồn mở". Chuẩn SQL khắt khe, hỗ trợ JSON cực xịn (đánh index được), xử lý không gian (PostGIS).</td>
+                                <td class="p-4 border-r border-slate-200 text-xs leading-relaxed">Hệ sinh thái Microsoft đỉnh cao. Tool quản trị SSMS vô địch. Tối ưu cực tốt cho Windows/C#.</td>
+                                <td class="p-4 text-xs leading-relaxed">Schema-less (không gò bó cột). Scale ngang dễ dàng. Lưu trữ data dạng JSON, phù hợp crawl data, log.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 border-r border-slate-200 font-semibold bg-slate-50 text-xs">Điểm yếu</td>
+                                <td class="p-4 border-r border-slate-200 text-xs">Query phức tạp (Analytical/Window functions) kém hơn Postgres. Thiếu full-outer-join.</td>
+                                <td class="p-4 border-r border-slate-200 text-xs">Cấu hình tuning ban đầu khá phức tạp. Ngốn RAM hơn MySQL với các kết nối lớn.</td>
+                                <td class="p-4 border-r border-slate-200 text-xs">Tốn phí bản quyền rất đắt (bản Enterprise). Chạy trên Linux chưa thật sự hoàn hảo 100%.</td>
+                                <td class="p-4 text-xs">Data dễ bị "rác" nếu dev không quản lý code tốt. JOIN (Lookup) cực kỳ tốn tài nguyên.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 border-r border-slate-200 font-semibold bg-slate-50 text-xs">Dự án phù hợp</td>
+                                <td class="p-4 border-r border-slate-200 text-xs">Web eCommerce, CMS (WordPress), App cơ bản.</td>
+                                <td class="p-4 border-r border-slate-200 text-xs">Hệ thống tài chính, ERP, App dùng lẫn lộn SQL và JSON, App bản đồ.</td>
+                                <td class="p-4 border-r border-slate-200 text-xs">Hệ thống doanh nghiệp lớn, nội bộ công ty dùng stack .NET.</td>
+                                <td class="p-4 text-xs">Mạng xã hội, Hệ thống phân tích log, Giỏ hàng thương mại điện tử, Data thay đổi liên tục.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- MYSQL SECTION -->
+            <div class="mb-4 bg-sky-50 text-sky-900 p-4 rounded-xl border border-sky-200 flex items-start gap-4 glow-mysql">
+                <div class="text-3xl">🐬</div>
+                <div>
+                    <h2 class="font-bold text-lg mb-1 text-[#00758F]">MySQL: Nhanh, Phổ biến, Quốc dân</h2>
+                    <p class="text-sm">Database mà 90% web developer đều học đầu tiên. Nếu bạn không biết chọn DB nào, MySQL luôn là lựa chọn an toàn. Sử dụng Storage Engine InnoDB (Mặc định).</p>
+                </div>
+            </div>
+
+            <section id="mysql-basics" class="mb-10 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><span class="text-[#00758F]">#</span> Lệnh Cốt Lõi & Đọc Hiểu EXPLAIN</h3>
+                
+                <div class="grid grid-cols-1 gap-4 mb-6">
+                    <!-- Cơ bản -->
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm group relative cursor-pointer" onclick="copyCode(this)">
+                        <div class="text-green-600 mb-2 font-bold text-xs">// 1. Khởi tạo & Thao tác cấu trúc (DDL)</div>
+                        <pre class="text-xs text-slate-700 font-mono overflow-x-auto"><span class="text-blue-600 font-bold">CREATE TABLE</span> users (
+    id <span class="text-blue-600">INT AUTO_INCREMENT PRIMARY KEY</span>,
+    email <span class="text-blue-600">VARCHAR</span>(255) <span class="text-blue-600">NOT NULL UNIQUE</span>,
+    status <span class="text-blue-600">ENUM</span>(<span class="text-amber-600">'active'</span>, <span class="text-amber-600">'banned'</span>) <span class="text-blue-600">DEFAULT</span> <span class="text-amber-600">'active'</span>,
+    created_at <span class="text-blue-600">TIMESTAMP DEFAULT CURRENT_TIMESTAMP</span>
+);
+
+<span class="text-slate-500">-- Thêm 1 cột (ALTER)</span>
+<span class="text-blue-600 font-bold">ALTER TABLE</span> users <span class="text-blue-600 font-bold">ADD COLUMN</span> age <span class="text-blue-600">INT</span>;</pre>
+                    </div>
+
+                    <!-- Truy vấn -->
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm group relative cursor-pointer" onclick="copyCode(this)">
+                        <div class="text-green-600 mb-2 font-bold text-xs">// 2. Upsert (Thêm mới, nếu trùng thì Cập nhật) - Tính năng cực hay của MySQL</div>
+                        <pre class="text-xs text-slate-700 font-mono overflow-x-auto"><span class="text-blue-600 font-bold">INSERT INTO</span> product_views (product_id, view_count) 
+<span class="text-blue-600 font-bold">VALUES</span> (1, 1)
+<span class="text-blue-600 font-bold">ON DUPLICATE KEY UPDATE</span> view_count = view_count + 1;</pre>
+                    </div>
+                </div>
+
+                <!-- Đọc EXPLAIN -->
+                <h4 class="font-bold text-slate-800 text-md mb-3 border-b border-slate-200 pb-2">🔍 Chiến lược Thực thi (EXPLAIN) - Đọc bệnh chậm query</h4>
+                <p class="text-sm text-slate-600 mb-3">Thêm từ khóa <code>EXPLAIN</code> trước lệnh SELECT để xem MySQL quét dữ liệu ra sao thay vì trả về kết quả.</p>
+                <div class="bg-slate-900 rounded-xl p-4 shadow-sm group relative cursor-pointer mb-4" onclick="copyCode(this)">
+                    <pre class="text-xs text-slate-300 font-mono overflow-x-auto"><span class="text-sky-400 font-bold">EXPLAIN SELECT</span> * <span class="text-sky-400 font-bold">FROM</span> orders <span class="text-sky-400 font-bold">WHERE</span> user_id = 5 <span class="text-sky-400 font-bold">AND</span> status = <span class="text-green-300">'pending'</span>;</pre>
+                </div>
+                <div class="bg-white border border-slate-200 p-4 rounded-lg shadow-sm">
+                    <p class="text-sm font-semibold mb-2 text-slate-800">Các cột quan trọng cần nhìn trong kết quả EXPLAIN:</p>
+                    <ul class="text-xs text-slate-600 space-y-2 font-mono">
+                        <li><strong class="text-pink-600">type</strong>: Cách lấy data. <br>
+                            👉 <span class="text-red-500 font-bold">ALL</span> (CỰC TỆ - Quét toàn bộ bảng từ đầu tới cuối).<br>
+                            👉 <span class="text-amber-500 font-bold">range</span> (Tạm ổn - Quét 1 khoảng index, vd: BETWEEN).<br>
+                            👉 <span class="text-green-500 font-bold">ref</span> / <span class="text-green-500 font-bold">eq_ref</span> / <span class="text-green-500 font-bold">const</span> (TUYỆT VỜI - Truy cập trực tiếp qua Index).
+                        </li>
+                        <li><strong class="text-pink-600">possible_keys</strong>: Các Index có thể dùng.</li>
+                        <li><strong class="text-pink-600">key</strong>: Index THỰC SỰ được MySQL đem ra xài. (Nếu bằng NULL thì lo tạo Index đi).</li>
+                        <li><strong class="text-pink-600">rows</strong>: Ước tính số dòng phải quét để tìm ra kết quả (càng nhỏ càng tốt).</li>
+                        <li><strong class="text-pink-600">Extra</strong>: <span class="text-red-500">Using filesort</span> hoặc <span class="text-red-500">Using temporary</span> là điềm xấu, báo hiệu câu ORDER BY/GROUP BY đang làm DB sặc tiết.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="mysql-admin" class="mb-14 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><span class="text-[#00758F]">#</span> Quản trị, Phân quyền & Backup</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm group relative cursor-pointer" onclick="copyCode(this)">
+                        <div class="text-green-600 mb-2 font-bold text-xs">// Tạo User & Phân quyền</div>
+                        <pre class="text-xs text-slate-700 font-mono overflow-x-auto"><span class="text-slate-500">-- Tạo user chỉ kết nối được từ localhost</span>
+<span class="text-blue-600 font-bold">CREATE USER</span> <span class="text-amber-600">'backend_dev'</span>@<span class="text-amber-600">'localhost'</span> <span class="text-blue-600 font-bold">IDENTIFIED BY</span> <span class="text-amber-600">'matkhau123'</span>;
+
+<span class="text-slate-500">-- Cấp quyền Đọc/Ghi/Sửa/Xóa riêng cho DB my_app</span>
+<span class="text-blue-600 font-bold">GRANT SELECT, INSERT, UPDATE, DELETE ON</span> my_app.* <span class="text-blue-600 font-bold">TO</span> <span class="text-amber-600">'backend_dev'</span>@<span class="text-amber-600">'localhost'</span>;
+
+<span class="text-slate-500">-- Cập nhật quyền vào hệ thống</span>
+<span class="text-blue-600 font-bold">FLUSH PRIVILEGES</span>;</pre>
+                    </div>
+
+                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 shadow-sm group relative cursor-pointer" onclick="copyCode(this)">
+                        <div class="text-green-400 mb-2 font-bold text-xs"># Lệnh Terminal (Không phải SQL) - Backup DB</div>
+                        <pre class="text-xs text-slate-300 font-mono overflow-x-auto"><span class="text-slate-500"># Dump (Xuất) Database ra file .sql</span>
+mysqldump -u root -p my_app > backup_myapp.sql
+
+<span class="text-slate-500"># Dump lấy Cấu trúc bảng (Bỏ qua data)</span>
+mysqldump -u root -p --no-data my_app > schema.sql
+
+<span class="text-slate-500"># Restore (Phục hồi) từ file</span>
+mysql -u root -p my_app < backup_myapp.sql</pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- POSTGRESQL SECTION -->
+            <div class="mb-4 bg-blue-50 text-blue-900 p-4 rounded-xl border border-blue-200 flex items-start gap-4 glow-pg">
+                <div class="text-3xl">🐘</div>
+                <div>
+                    <h2 class="font-bold text-lg mb-1 text-[#336791]">PostgreSQL: Vua Mã Nguồn Mở</h2>
+                    <p class="text-sm">Trâu bò, chuẩn mực, nhiều tính năng xịn như JSONB, Array, Window Functions. Rất phù hợp cho các bài toán phân tích dữ liệu, Data Warehouse hoặc ứng dụng lưu trữ linh hoạt hỗn hợp.</p>
+                </div>
+            </div>
+
+            <section id="pg-advanced" class="mb-10 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><span class="text-[#336791]">#</span> Các tính năng "Sát thủ" (JSON, Array, CTE)</h3>
+                
+                <div class="space-y-4">
+                    <!-- JSONB -->
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm group relative cursor-pointer" onclick="copyCode(this)">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">1. Thao tác với JSONB (Siêu tốc độ)</h4>
+                        <p class="text-xs text-slate-600 mb-2">Postgres có thể làm NoSQL! Khác với JSON thường (chỉ là chuỗi), JSONB lưu dưới dạng nhị phân, cho phép truy vấn và tạo Index bên trong JSON.</p>
+                        <pre class="text-xs text-slate-700 font-mono overflow-x-auto"><span class="text-blue-600 font-bold">CREATE TABLE</span> logs ( id <span class="text-blue-600">SERIAL PRIMARY KEY</span>, data <span class="text-blue-600">JSONB</span> );
+
+<span class="text-slate-500">-- Tìm các row có `data` chứa {"status": "error"}</span>
+<span class="text-blue-600 font-bold">SELECT</span> * <span class="text-blue-600 font-bold">FROM</span> logs <span class="text-blue-600 font-bold">WHERE</span> data @> <span class="text-amber-600">'{"status": "error"}'</span>;
+
+<span class="text-slate-500">-- Lấy ra 1 field trong JSONB (Dùng ->> trả về text)</span>
+<span class="text-blue-600 font-bold">SELECT</span> data->><span class="text-amber-600">'user_agent'</span> <span class="text-blue-600 font-bold">AS</span> browser <span class="text-blue-600 font-bold">FROM</span> logs;
+
+<span class="text-slate-500">-- Đánh Index GIN (Cực xịn) cho JSONB để search siêu nhanh</span>
+<span class="text-blue-600 font-bold">CREATE INDEX</span> idx_logs_data <span class="text-blue-600 font-bold">ON</span> logs <span class="text-blue-600 font-bold">USING GIN</span> (data);</pre>
+                    </div>
+
+                    <!-- Arrays -->
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm group relative cursor-pointer" onclick="copyCode(this)">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">2. Cột dạng Mảng (Array)</h4>
+                        <pre class="text-xs text-slate-700 font-mono overflow-x-auto"><span class="text-blue-600 font-bold">CREATE TABLE</span> posts ( tags <span class="text-blue-600">TEXT</span>[] );
+<span class="text-blue-600 font-bold">INSERT INTO</span> posts <span class="text-blue-600 font-bold">VALUES</span> (<span class="text-blue-600">ARRAY</span>[<span class="text-amber-600">'Tech'</span>, <span class="text-amber-600">'Database'</span>]);
+
+<span class="text-slate-500">-- Tìm bài viết có tag 'Tech' (Dùng toán tử ANY)</span>
+<span class="text-blue-600 font-bold">SELECT</span> * <span class="text-blue-600 font-bold">FROM</span> posts <span class="text-blue-600 font-bold">WHERE</span> <span class="text-amber-600">'Tech'</span> = <span class="text-blue-600 font-bold">ANY</span>(tags);</pre>
+                    </div>
+
+                    <!-- Window Functions -->
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm group relative cursor-pointer" onclick="copyCode(this)">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">3. Window Functions (Dùng làm báo cáo cực đỉnh)</h4>
+                        <p class="text-xs text-slate-600 mb-2">Không gộp dòng lại như GROUP BY. Nó vẫn giữ nguyên số dòng nhưng thêm cột tính toán.</p>
+                        <pre class="text-xs text-slate-700 font-mono overflow-x-auto"><span class="text-slate-500">-- Xếp hạng nhân viên theo lương trong TỪNG PHÒNG BAN (Partition By)</span>
+<span class="text-blue-600 font-bold">SELECT</span> name, department, salary,
+       <span class="text-blue-600 font-bold">RANK</span>() <span class="text-blue-600 font-bold">OVER</span> (<span class="text-blue-600 font-bold">PARTITION BY</span> department <span class="text-blue-600 font-bold">ORDER BY</span> salary <span class="text-blue-600 font-bold">DESC</span>) <span class="text-blue-600 font-bold">as</span> rank
+<span class="text-blue-600 font-bold">FROM</span> employees;</pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="pg-admin" class="mb-14 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><span class="text-[#336791]">#</span> EXPLAIN ANALYZE & Quản trị Postgres</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="bg-white border border-slate-200 p-4 rounded-lg shadow-sm">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">EXPLAIN ANALYZE</h4>
+                        <p class="text-[11px] text-slate-600 mb-2">Khác với MySQL chỉ <code>EXPLAIN</code> (chỉ đoán), thêm <code>ANALYZE</code> trong Postgres sẽ **chạy thật** câu lệnh để đo thời gian thực tế.</p>
+                        <div class="bg-slate-900 p-3 rounded group relative cursor-pointer" onclick="copyCode(this)">
+                            <pre class="text-[11px] text-slate-300 font-mono overflow-x-auto"><span class="text-sky-400 font-bold">EXPLAIN ANALYZE SELECT</span> * <span class="text-sky-400 font-bold">FROM</span> users <span class="text-sky-400 font-bold">WHERE</span> age > 30;</pre>
+                        </div>
+                        <ul class="text-[11px] text-slate-600 mt-2 space-y-1 font-mono">
+                            <li><span class="text-red-500">Seq Scan</span>: Quét tuần tự cả bảng (Giống ALL của MySQL).</li>
+                            <li><span class="text-green-500">Index Scan</span>: Tìm qua Index (Tốt).</li>
+                            <li><span class="text-amber-500">Index Only Scan</span>: Siêu nhanh. Dữ liệu cần thiết lấy luôn từ Index, không thèm ngó vào Bảng chính nữa.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-900 border border-slate-700 p-4 rounded-lg shadow-sm group relative cursor-pointer" onclick="copyCode(this)">
+                        <div class="text-green-400 mb-2 font-bold text-xs"># Lệnh Terminal Backup (pg_dump)</div>
+                        <pre class="text-[11px] text-slate-300 font-mono overflow-x-auto"><span class="text-slate-500"># Dump DB (format custom -Fc tối ưu, nén)</span>
+pg_dump -U username -Fc db_name > backup.dump
+
+<span class="text-slate-500"># Restore từ file nén trên</span>
+pg_restore -U username -d db_name -1 backup.dump
+
+<span class="text-slate-500"># Login giao diện cmd (giống mysql -u)</span>
+psql -U username -d db_name
+<span class="text-slate-500"># \dt (xem danh sách bảng), \q (thoát)</span></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SQL SERVER SECTION -->
+            <div class="mb-4 bg-red-50 text-red-900 p-4 rounded-xl border border-red-200 flex items-start gap-4 glow-sqlserver">
+                <div class="text-3xl">🪟</div>
+                <div>
+                    <h2 class="font-bold text-lg mb-1 text-[#CC292B]">SQL Server (Microsoft)</h2>
+                    <p class="text-sm">Trùm doanh nghiệp, đồ họa quản trị SSMS vô địch thiên hạ. Ngôn ngữ T-SQL mạnh mẽ với nhiều hàm đặc thù. Hợp với hệ sinh thái C# / .NET.</p>
+                </div>
+            </div>
+
+            <section id="sqlserver-tsql" class="mb-10 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><span class="text-[#CC292B]">#</span> T-SQL & Cú pháp đặc thù</h3>
+                
+                <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm group relative cursor-pointer mb-6" onclick="copyCode(this)">
+                    <pre class="text-xs text-slate-700 font-mono overflow-x-auto"><span class="text-slate-500">-- 1. Không dùng LIMIT, dùng TOP</span>
+<span class="text-blue-600 font-bold">SELECT TOP</span> 10 * <span class="text-blue-600 font-bold">FROM</span> Customers <span class="text-blue-600 font-bold">ORDER BY</span> Score <span class="text-blue-600 font-bold">DESC</span>;
+
+<span class="text-slate-500">-- 2. Khai báo biến và logic rẽ nhánh (IF ELSE) ngay trong script SQL</span>
+<span class="text-blue-600 font-bold">DECLARE</span> @UserId <span class="text-blue-600">INT</span> = 5;
+<span class="text-blue-600 font-bold">IF</span> <span class="text-blue-600 font-bold">EXISTS</span>(<span class="text-blue-600 font-bold">SELECT</span> 1 <span class="text-blue-600 font-bold">FROM</span> Users <span class="text-blue-600 font-bold">WHERE</span> Id = @UserId)
+<span class="text-blue-600 font-bold">BEGIN</span>
+    <span class="text-blue-600 font-bold">PRINT</span> <span class="text-amber-600">'User exists'</span>;
+<span class="text-blue-600 font-bold">END</span>
+
+<span class="text-slate-500">-- 3. Xử lý NULL (ISNULL thay vì IFNULL của MySQL)</span>
+<span class="text-blue-600 font-bold">SELECT</span> ProductName, <span class="text-blue-600 font-bold">ISNULL</span>(Description, <span class="text-amber-600">'No desc'</span>) <span class="text-blue-600 font-bold">FROM</span> Products;
+
+<span class="text-slate-500">-- 4. Phân trang (Pagination) bản mới</span>
+<span class="text-blue-600 font-bold">SELECT</span> * <span class="text-blue-600 font-bold">FROM</span> Orders <span class="text-blue-600 font-bold">ORDER BY</span> OrderDate
+<span class="text-blue-600 font-bold">OFFSET</span> 20 <span class="text-blue-600 font-bold">ROWS FETCH NEXT</span> 10 <span class="text-blue-600 font-bold">ROWS ONLY</span>; <span class="text-slate-500">-- Bỏ qua 20 dòng, lấy 10 dòng tiếp</span></pre>
+                </div>
+            </section>
+
+            <section id="sqlserver-admin" class="mb-14 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><span class="text-[#CC292B]">#</span> CTE, Stored Procedure & Tính hiệu năng</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm group relative cursor-pointer" onclick="copyCode(this)">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">CTE (Common Table Expressions)</h4>
+                        <p class="text-[11px] text-slate-600 mb-2">Tạo ra 1 bảng tạm thời trên Ram để tái sử dụng trong câu query. Giúp code gọn, thay thế cho Sub-query lòng vòng.</p>
+                        <pre class="text-[11px] text-slate-700 font-mono overflow-x-auto"><span class="text-blue-600 font-bold">WITH</span> Sales_CTE <span class="text-blue-600 font-bold">AS</span> (
+  <span class="text-blue-600 font-bold">SELECT</span> UserId, <span class="text-blue-600 font-bold">SUM</span>(Total) <span class="text-blue-600 font-bold">AS</span> TotalSales
+  <span class="text-blue-600 font-bold">FROM</span> Orders <span class="text-blue-600 font-bold">GROUP BY</span> UserId
+)
+<span class="text-slate-500">-- Sử dụng bảng ảo vừa tạo</span>
+<span class="text-blue-600 font-bold">SELECT</span> u.Name, s.TotalSales 
+<span class="text-blue-600 font-bold">FROM</span> Users u 
+<span class="text-blue-600 font-bold">JOIN</span> Sales_CTE s <span class="text-blue-600 font-bold">ON</span> u.Id = s.UserId;</pre>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm group relative cursor-pointer" onclick="copyCode(this)">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">Đo hiệu năng trực tiếp</h4>
+                        <p class="text-[11px] text-slate-600 mb-2">SQL Server Management Studio (SSMS) có nút <code>Include Actual Execution Plan (Ctrl+M)</code> xem bằng sơ đồ. Nhưng bằng code, bật cái này:</p>
+                        <pre class="text-[11px] text-slate-700 font-mono overflow-x-auto"><span class="text-blue-600 font-bold">SET STATISTICS IO ON</span>;
+<span class="text-blue-600 font-bold">SET STATISTICS TIME ON</span>;
+
+<span class="text-blue-600 font-bold">SELECT</span> * <span class="text-blue-600 font-bold">FROM</span> Users <span class="text-blue-600 font-bold">WHERE</span> Username = <span class="text-amber-600">'admin'</span>;
+<span class="text-slate-500">-- Sau khi chạy sẽ in ra TAB Messages:</span>
+<span class="text-slate-500">-- Dòng "logical reads" càng cao -> Query càng lởm.</span>
+<span class="text-slate-500">-- Quét RAM (logical read) nhiều làm nghẽn cổ chai.</span></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MONGODB SECTION -->
+            <div class="mb-4 bg-green-50 text-green-900 p-4 rounded-xl border border-green-200 flex items-start gap-4 glow-mongo">
+                <div class="text-3xl">🍃</div>
+                <div>
+                    <h2 class="font-bold text-lg mb-1 text-[#47A248]">MongoDB: Kẻ phá vỡ rào cản Cột/Bảng</h2>
+                    <p class="text-sm">Database NoSQL hướng tài liệu (Document). Lưu dữ liệu y chang cấu trúc JSON/Object của Code. Cực phù hợp cho start-up làm app thay đổi tính năng xoành xoạch mà ko muốn <code>ALTER TABLE</code> mất công.</p>
+                </div>
+            </div>
+
+            <section id="mongo-basics" class="mb-10 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><span class="text-[#47A248]">#</span> Từ điển đối chiếu & Cú pháp CRUD</h3>
+                
+                <div class="flex gap-4 font-mono text-sm mb-4">
+                    <span class="bg-slate-100 px-3 py-1 rounded">Table = <b>Collection</b></span>
+                    <span class="bg-slate-100 px-3 py-1 rounded">Row = <b>Document</b></span>
+                    <span class="bg-slate-100 px-3 py-1 rounded">Join = <b>$lookup</b></span>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 shadow-sm group relative cursor-pointer mb-6" onclick="copyCode(this)">
+                    <pre class="text-xs text-slate-300 font-mono overflow-x-auto"><span class="text-slate-500">// 1. Tìm kiếm (Giống SELECT WHERE)</span>
+db.users.find({ age: { <span class="text-pink-400">$gte</span>: 18, <span class="text-pink-400">$lte</span>: 30 } }); <span class="text-slate-500">// >= 18 và <= 30</span>
+
+<span class="text-slate-500">// 2. Cập nhật. RẤT QUAN TRỌNG: Phải dùng $set. Nếu không nó ghi đè mất luôn doc!</span>
+db.users.updateOne(
+  { _id: 1 }, 
+  { <span class="text-pink-400">$set</span>: { name: "Bob" }, <span class="text-pink-400">$inc</span>: { view: 1 } } <span class="text-slate-500">// $inc: tăng view lên 1</span>
+);
+
+<span class="text-slate-500">// 3. Xử lý Mảng bên trong Document (Thêm sở thích)</span>
+db.users.updateOne({ _id: 1 }, { <span class="text-pink-400">$push</span>: { hobbies: "Coding" } });</pre>
+                </div>
+            </section>
+
+            <section id="mongo-aggregate" class="mb-14 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><span class="text-[#47A248]">#</span> Aggregation Pipeline (Đường ống ma thuật)</h3>
+                <p class="text-sm text-slate-600 mb-4">Mọi thứ phức tạp như GROUP BY, JOIN, FILTER trong SQL sẽ được giải quyết bằng "Đường ống" theo từng giai đoạn (Stage). Data đi qua stage 1 bị bóp nhỏ lại, đổ xuống stage 2 xử lý tiếp...</p>
+
+                <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 shadow-sm group relative cursor-pointer mb-6" onclick="copyCode(this)">
+                    <pre class="text-xs text-slate-300 font-mono overflow-x-auto">db.orders.aggregate([
+  <span class="text-slate-500">// Giai đoạn 1: Lọc (Giống WHERE) - Chỉ lấy đơn hàng đã giao</span>
+  { <span class="text-pink-400">$match</span>: { status: "delivered" } },
+
+  <span class="text-slate-500">// Giai đoạn 2: Kéo data từ bảng khác vào (Giống LEFT JOIN)</span>
+  { <span class="text-pink-400">$lookup</span>: {
+      from: "users",        <span class="text-slate-500">// Tên collection muốn join</span>
+      localField: "userId", <span class="text-slate-500">// Cột ở bảng orders</span>
+      foreignField: "_id",  <span class="text-slate-500">// Cột ở bảng users</span>
+      as: "user_info"       <span class="text-slate-500">// Tên mảng kết quả trả về</span>
+  }},
+
+  <span class="text-slate-500">// Giai đoạn 3: Gom nhóm (Giống GROUP BY) - Tính tổng tiền theo ngày</span>
+  { <span class="text-pink-400">$group</span>: {
+      _id: "$date",
+      totalRevenue: { <span class="text-pink-400">$sum</span>: "$amount" }
+  }},
+
+  <span class="text-slate-500">// Giai đoạn 4: Sắp xếp (Giống ORDER BY DESC)</span>
+  { <span class="text-pink-400">$sort</span>: { totalRevenue: -1 } }
+]);</pre>
+                </div>
+            </section>
+
+            <!-- TOOLS & OPTIMIZATION -->
+            <div class="mb-4 bg-amber-50 text-amber-900 p-4 rounded-xl border border-amber-200 flex items-start gap-4">
+                <div class="text-3xl">🦫</div>
+                <div>
+                    <h2 class="font-bold text-lg mb-1 text-amber-700">DBeaver & Bí Kíp Tối Ưu Quốc Dân</h2>
+                    <p class="text-sm">Công cụ và chiến lược dùng chung cho MỌI LOẠI Database RDBMS.</p>
+                </div>
+            </div>
+
+            <section id="dbeaver" class="mb-10 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><span class="text-amber-700">#</span> 10. DBeaver & Hệ sinh thái Tools</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">Tại sao dùng DBeaver?</h4>
+                        <ul class="text-[12px] text-slate-600 space-y-2 list-disc pl-4">
+                            <li>App miễn phí (Bản Community). Java-based.</li>
+                            <li>Kết nối ĐƯỢC TẤT CẢ CÁC LOẠI DB trên đời: MySQL, PG, SQL Server, SQLite, MongoDB... (Nó tự tải driver jdbc về).</li>
+                            <li>Tự động vẽ sơ đồ quan hệ ER Diagram trực quan từ các bảng đang có.</li>
+                            <li>Bôi đen chỗ nào, <code>Ctrl + Enter</code> chạy đúng chỗ đó.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">Phím tắt sống còn (SQL Editor)</h4>
+                        <ul class="text-[12px] text-slate-600 space-y-2 font-mono">
+                            <li><span class="bg-slate-100 px-1 rounded text-pink-600">Ctrl + Enter</span>: Chạy câu query.</li>
+                            <li><span class="bg-slate-100 px-1 rounded text-pink-600">Ctrl + Shift + F</span>: Format (Làm đẹp) code SQL, auto thụt lề chuẩn.</li>
+                            <li><span class="bg-slate-100 px-1 rounded text-pink-600">Alt + X</span>: Chạy toàn bộ file (Execute Script).</li>
+                            <li><span class="bg-slate-100 px-1 rounded text-pink-600">F4</span>: Mở properties của table (Xem column, index, constraints).</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                    <h4 class="font-bold text-slate-800 text-sm mb-3">🛠️ Các "Vũ khí" Quản trị khác (Alternatives)</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="bg-slate-50 border border-slate-200 p-3 rounded">
+                            <h5 class="font-bold text-slate-800 text-xs mb-1">DataGrip (JetBrains)</h5>
+                            <p class="text-[11px] text-slate-600">Trả phí, cực kỳ thông minh, gợi ý code (autocomplete) bá đạo nhất hiện nay. Hỗ trợ mọi loại DB.</p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 p-3 rounded">
+                            <h5 class="font-bold text-slate-800 text-xs mb-1">TablePlus</h5>
+                            <p class="text-[11px] text-slate-600">Ứng dụng Native siêu nhẹ, UI/UX hiện đại, chạy cực nhanh (rất được Mac users yêu thích).</p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 p-3 rounded">
+                            <h5 class="font-bold text-slate-800 text-xs mb-1">Công cụ Đặc thù</h5>
+                            <p class="text-[11px] text-slate-600"><strong>SSMS:</strong> Vua của SQL Server.<br><strong>MongoDB Compass:</strong> Tool chính chủ cực mạnh để Build/Test Aggregation Pipeline cho Mongo.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="db-optimization" class="mb-16 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><span class="text-amber-700">#</span> 11. Nâng cao: Lệnh TRUNCATE & 3 Lỗi Gây Chậm DB</h3>
+                
+                <div class="bg-slate-900 p-4 rounded-xl shadow-sm mb-6 group cursor-pointer" onclick="copyCode(this)">
+                    <h4 class="text-green-400 font-bold text-sm mb-2">// Khái niệm nâng cao: DROP vs TRUNCATE vs DELETE</h4>
+                    <pre class="text-[12px] text-slate-300 font-mono whitespace-pre-wrap"><span class="text-slate-500">-- 1. DELETE (DML - Chậm nhất, An toàn nhất)</span>
+<span class="text-sky-400 font-bold">DELETE FROM</span> orders <span class="text-sky-400 font-bold">WHERE</span> status = <span class="text-amber-300">'cancelled'</span>; 
+<span class="text-slate-500">-- Quét từng dòng, khóa (lock) từng dòng, ghi log từng dòng để có thể Undo (Rollback). Cột ID tự tăng KHÔNG bị reset. Xóa 10 triệu dòng có thể làm treo DB.</span>
+
+<span class="text-slate-500">-- 2. TRUNCATE (DDL - Siêu tốc độ, Cực kỳ nguy hiểm)</span>
+<span class="text-sky-400 font-bold">TRUNCATE TABLE</span> orders;
+<span class="text-slate-500">-- Chạy trong 1s dù bảng có 1 tỷ dòng. Vì nó ném luôn file lưu trữ bảng đó đi ở cấp hệ điều hành và tạo 1 bảng trống y hệt. KHÔNG ghi log, KHÔNG thể Rollback, RESET luôn cột ID tự tăng về 1.</span>
+
+<span class="text-slate-500">-- 3. DROP (DDL - Hủy diệt)</span>
+<span class="text-sky-400 font-bold">DROP TABLE</span> orders;
+<span class="text-slate-500">-- Xóa sạch sành sanh từ Data đến Cấu trúc bảng (Schema). Mất luôn cái bảng.</span></pre>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-white border-l-4 border-l-red-500 border border-slate-200 rounded-lg p-4 shadow-sm">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">1. Lỗi Index (Quên đánh, Composite, Covering)</h4>
+                        <p class="text-[12px] text-slate-600 mb-2">
+                            <strong>Định luật:</strong> Cột nào hay xuất hiện sau <code>WHERE</code>, <code>ORDER BY</code>, <code>JOIN ON</code> thì phải tạo Index cho nó.<br>
+                            <strong>Composite Index (Index gộp):</strong> <code>CREATE INDEX idx_user ON users(status, created_at)</code>. CHÚ Ý: Luật <i>"Left-most prefix"</i> (Phải dùng từ trái sang phải). Nếu bạn `WHERE created_at = ?` mà không có `status`, DB sẽ KHÔNG dùng index này.<br>
+                            <strong>Covering Index:</strong> Nếu bạn `SELECT status, created_at` và 2 cột này đã nằm trong Composite Index, DB sẽ lấy data trực tiếp từ cây B-Tree Index trả về luôn mà không thèm chọc vào bảng thật, tốc độ bàn thờ.
+                        </p>
+                    </div>
+
+                    <div class="bg-white border-l-4 border-l-red-500 border border-slate-200 rounded-lg p-4 shadow-sm">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">2. Lỗi Khóa (Lock) và Deadlock do Transaction</h4>
+                        <p class="text-[12px] text-slate-600 mb-2">
+                            <strong>Biểu hiện:</strong> CPU bình thường nhưng Query chạy tốn vài chục giây. Khả năng cao do các Query đang tranh giành quyền Ghi (Write Lock) trên cùng 1 dòng dữ liệu.<br>
+                            <strong>Isolation Level (Mức độ cô lập):</strong> Mặc định MySQL là <i>Repeatable Read</i>, nó sẽ khóa (Lock) dữ liệu gắt gao hơn để chống đọc sai. Nếu app của bạn chỉ cần đọc nhanh không quan trọng dữ liệu vừa bị thằng khác sửa cách đây 1s (vd: đếm view, like), hãy cân nhắc hạ xuống <i>Read Committed</i> để giảm thiểu Lock hãm tốc độ.
+                        </p>
+                    </div>
+
+                    <div class="bg-white border-l-4 border-l-red-500 border border-slate-200 rounded-lg p-4 shadow-sm">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">3. Phân trang LIMIT/OFFSET mù quáng (Trang quá sâu)</h4>
+                        <p class="text-[12px] text-slate-600 mb-2">
+                            Lệnh <code>LIMIT 10 OFFSET 1000000</code>: Máy chủ phải lật qua ĐÚNG 1 TRIỆU record đầu tiên, vứt đi, rồi lấy 10 record tiếp theo. Cực kì ngốn CPU (Lỗi phổ biến nhất khi làm API list).<br>
+                            <strong>Khắc phục:</strong> Dùng Keyset Pagination (Cursor). Client gửi ID cuối cùng của trang trước. Câu query trở thành: <code>WHERE id > 1000000 LIMIT 10</code>. Database chọc thẳng vào ID 1000000 trong Index lấy luôn, mất đúng 1ms.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- REDIS SECTION -->
+            <div class="mb-4 bg-red-50 text-red-900 p-4 rounded-xl border border-red-200 flex items-start gap-4 glow-redis">
+                <div class="text-3xl">⚡</div>
+                <div>
+                    <h2 class="font-bold text-lg mb-1 text-red-600">Redis: Phép thuật In-Memory Cache</h2>
+                    <p class="text-sm">Thay vì lúc nào cũng chọc vào Database vật lý (ổ cứng HDD/SSD) rất chậm, ta lưu tạm kết quả lên RAM (Redis). Tốc độ trả về gần như 0ms.</p>
+                </div>
+            </div>
+
+            <section id="redis-basics" class="mb-14 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><span class="text-red-600">#</span> Vận hành chuyên sâu: Lưu trữ, Phân trang & Tìm kiếm</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-white border border-slate-200 p-4 rounded-lg shadow-sm">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">Redis Lưu Data ra sao? (RDB vs AOF)</h4>
+                        <p class="text-[12px] text-slate-600 mb-2">Redis lưu trên RAM, nếu cúp điện thì mất hết? KHÔNG! Redis có cơ chế ghi xuống ổ cứng (Persistence):</p>
+                        <ul class="text-[11px] text-slate-600 space-y-1 list-disc pl-4">
+                            <li><strong>RDB (Snapshot):</strong> Cứ 5 phút chụp hình RAM 1 lần lưu thành file `dump.rdb`. Phục hồi siêu nhanh, nhưng nếu sập ở phút thứ 4 thì mất data 4 phút đó.</li>
+                            <li><strong>AOF (Append Only File):</strong> Bạn gõ lệnh gì (`SET a 1`), nó ghi dòng lệnh đó vào file text. An toàn tuyệt đối (không mất data), nhưng file sẽ rất to và phục hồi chậm.</li>
+                            <li><strong>Best Practice:</strong> Bật cả 2. Hoặc cấu hình chạy RDB, còn AOF chỉ ghi mỗi giây 1 lần (fsync everysec).</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white border border-slate-200 p-4 rounded-lg shadow-sm">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">Chiến lược dọn rác (Eviction Policy)</h4>
+                        <p class="text-[12px] text-slate-600 mb-2">RAM thì có hạn (vd server 2GB). Khi RAM đầy, Redis sẽ làm gì với Data mới đưa vào?</p>
+                        <ul class="text-[11px] text-slate-600 space-y-1 list-disc pl-4">
+                            <li><strong>allkeys-lru:</strong> Xóa các Key <strong>ít được sử dụng nhất trong thời gian dài</strong> (Chiến lược phổ biến nhất để làm Cache).</li>
+                            <li><strong>allkeys-lfu:</strong> Xóa các Key <strong>có tần suất truy cập thấp nhất</strong>.</li>
+                            <li><strong>noeviction:</strong> Không xóa gì cả, RAM đầy thì báo lỗi OOM (Out of Memory). Dùng khi Redis đóng vai trò là DB chính chứ không phải Cache.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 p-4 rounded-xl shadow-sm group cursor-pointer mb-6" onclick="copyCode(this)">
+                    <h4 class="text-green-400 font-bold text-sm mb-2">// Kỹ thuật Phân trang (Pagination) bằng Redis (Siêu cấp)</h4>
+                    <p class="text-[11px] text-slate-400 mb-2">Thay vì Cache cả cục JSON bự chảng cho Page 1, Page 2... Rất dễ lỗi thời khi Data đổi. Ta dùng ZSET lưu ID, và HASH lưu Data riêng lẻ.</p>
+                    <pre class="text-[11px] text-slate-300 font-mono whitespace-pre-wrap"><span class="text-slate-500">-- BƯỚC 1: Lưu dữ liệu từng bài viết vào HASH (Key: "post:{id}")</span>
+<span class="text-sky-400 font-bold">HSET</span> post:101 title "Redis xịn" author "Alex"
+<span class="text-sky-400 font-bold">HSET</span> post:102 title "Học Postgres" author "Bob"
+
+<span class="text-slate-500">-- BƯỚC 2: Thêm ID bài viết vào 1 danh sách ZSET. Cột ĐIỂM (Score) chính là Timestamp để sắp xếp mới nhất</span>
+<span class="text-sky-400 font-bold">ZADD</span> posts:timeline 1700000000 "101" 1700005000 "102"
+
+<span class="text-slate-500">-- BƯỚC 3: Xử lý Request Lấy Page 1 (10 bài mới nhất)</span>
+<span class="text-slate-500">-- Dùng ZREVRANGE lấy 10 cái ID từ trên xuống (Offset 0, Limit 10)</span>
+<span class="text-sky-400 font-bold">ZREVRANGE</span> posts:timeline 0 9
+<span class="text-slate-500">-- Trả về: ["102", "101"]</span>
+
+<span class="text-slate-500">-- BƯỚC 4: Code Backend lấy mảng ID đó, vòng lặp gọi HMGET để lấy thông tin chi tiết</span>
+<span class="text-sky-400 font-bold">HMGET</span> post:102 title author</pre>
+                </div>
+
+                <div class="bg-white border-l-4 border-l-red-500 border border-slate-200 rounded-lg p-4 shadow-sm">
+                    <h4 class="font-bold text-slate-800 text-sm mb-2">🔍 Tìm kiếm trên Redis (Search)</h4>
+                    <p class="text-[12px] text-slate-600 mb-2">
+                        Bản thân Redis nguyên thủy là dạng <code>Key-Value</code>, nó <strong>KHÔNG</strong> sinh ra để gõ chữ "Re" tìm ra "Redis" (LIKE %..%).
+                        Để tìm kiếm, bạn có 2 cách:
+                    </p>
+                    <ul class="text-[12px] text-slate-600 space-y-3 font-mono">
+                        <li><strong>Cách 1 (Thủ công bằng SET):</strong> Tạo các tập hợp (Set). Ví dụ: <br> <code>SADD tag:tech "post:1" "post:2"</code> <br> <code>SADD tag:new "post:2" "post:3"</code> <br>Để tìm bài viết vừa có tag `tech` VÀ `new`, dùng phép giao: <code>SINTER tag:tech tag:new</code> -> Kết quả ra <code>post:2</code>.</li>
+                        <li><strong>Cách 2 (Siêu vũ khí RediSearch):</strong> Phải cài thêm Module (hoặc xài Redis Stack). Nó biến Redis thành 1 Engine tìm kiếm Full-text xịn như ElasticSearch.<br>
+                        <code>FT.CREATE idx:posts ON HASH PREFIX 1 post: SCHEMA title TEXT author TAG</code><br>
+                        <code>FT.SEARCH idx:posts "@title:Redis @author:{Alex}"</code></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- GRAPH DATABASE SECTION -->
+            <div class="mb-4 bg-indigo-50 text-indigo-900 p-4 rounded-xl border border-indigo-200 flex items-start gap-4 glow-graph">
+                <div class="text-3xl">🕸️</div>
+                <div>
+                    <h2 class="font-bold text-lg mb-1 text-indigo-600">Graph Database (Neo4j): Mạng lưới các mối quan hệ</h2>
+                    <p class="text-sm">Khi dự án của bạn đụng tới "Mạng xã hội", "Gợi ý sản phẩm", "Tìm đường đi ngắn nhất", việc dùng bảng SQL (JOIN qua lại hàng chục lần) sẽ khiến hệ thống chết tắc. Graph DB sinh ra để làm việc này.</p>
+                </div>
+            </div>
+
+            <section id="graph-basics" class="mb-14 scroll-mt-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><span class="text-indigo-600">#</span> Tư duy đồ thị & Ngôn ngữ Cypher</h3>
+                
+                <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-sm mb-6">
+                    <p class="text-sm text-slate-600 mb-3">Graph DB vứt bỏ hoàn toàn khái niệm Bảng/Cột. Nó chỉ có 2 thứ: <strong>Node (Nút - Thực thể)</strong> và <strong>Edge/Relationship (Cạnh - Mối quan hệ)</strong>. Cả 2 đều có thể chứa Properties (Thuộc tính).</p>
+                    <div class="flex items-center gap-4 justify-center py-4 bg-slate-50 rounded border border-slate-200">
+                        <div class="bg-blue-100 text-blue-800 p-3 rounded-full font-bold text-xs border-2 border-blue-400 shadow-sm">(Node: Person {name: 'A'})</div>
+                        <div class="flex-1 max-w-[100px] border-b-2 border-dashed border-slate-400 relative">
+                            <span class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-slate-500 bg-slate-50 px-1">-[:KNOWS]-></span>
+                            <div class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 border-t-2 border-r-2 border-slate-400 rotate-45"></div>
+                        </div>
+                        <div class="bg-green-100 text-green-800 p-3 rounded-full font-bold text-xs border-2 border-green-400 shadow-sm">(Node: Person {name: 'B'})</div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 p-4 rounded-xl shadow-sm group cursor-pointer" onclick="copyCode(this)">
+                    <h4 class="text-green-400 font-bold text-xs mb-2">// Truy vấn Cypher (Neo4j) - Vẽ hình bằng Text</h4>
+                    <pre class="text-[11px] text-slate-300 font-mono whitespace-pre-wrap"><span class="text-slate-500">-- 1. Tạo 2 người và mối quan hệ Bạn Bè</span>
+<span class="text-sky-400 font-bold">CREATE</span> (a:Person {name: <span class="text-amber-300">'Alice'</span>})
+<span class="text-sky-400 font-bold">CREATE</span> (b:Person {name: <span class="text-amber-300">'Bob'</span>})
+<span class="text-sky-400 font-bold">CREATE</span> (a)-[:FRIEND_WITH {since: 2023}]->(b)
+
+<span class="text-slate-500">-- 2. Đỉnh cao: Thuật toán Hệ thống gợi ý kết bạn (Recommendation) - Chỉ bằng 2 dòng code</span>
+<span class="text-slate-500">-- "Tìm bạn của bạn của Alice, nhưng người đó CHƯA LÀ bạn trực tiếp của Alice"</span>
+<span class="text-sky-400 font-bold">MATCH</span> (alice:Person {name: <span class="text-amber-300">'Alice'</span>})-[:FRIEND_WITH]->(friend)-[:FRIEND_WITH]->(fof)
+<span class="text-sky-400 font-bold">WHERE NOT</span> (alice)-[:FRIEND_WITH]->(fof)
+<span class="text-sky-400 font-bold">RETURN</span> fof.name;</pre>
+                </div>
+            </section>
+
+            <!-- MONITORING SECTION -->
+            <div class="mb-4 bg-orange-50 text-orange-900 p-4 rounded-xl border border-orange-200 flex items-start gap-4 glow-monitor">
+                <div class="text-3xl">📊</div>
+                <div>
+                    <h2 class="font-bold text-lg mb-1 text-orange-600">Giám Sát (Monitoring): Prometheus & Grafana</h2>
+                    <p class="text-sm">Bộ đôi thần thánh để theo dõi sức khỏe của Database và Server. Prometheus có nhiệm vụ đi "hút" dữ liệu (pull metrics), Grafana lấy dữ liệu đó vẽ thành biểu đồ Dashboard ngầu đét.</p>
+                </div>
+            </div>
+
+            <section id="monitor-basics" class="mb-14 scroll-mt-24">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">1. Prometheus (Kẻ thu thập - Time-Series DB)</h4>
+                        <p class="text-[12px] text-slate-600 mb-2">Prometheus hoạt động theo cơ chế <strong>PULL</strong>. Nghĩa là cứ mỗi 15 giây, nó lại phi tới Database của bạn để "hút" dữ liệu các chỉ số về. Để nó hút được DB, bạn phải cài một cái đầu hút gọi là <strong>Exporter</strong> (VD: <code>mysqld_exporter</code> hoặc <code>postgres_exporter</code>).</p>
+                        <p class="text-[12px] text-slate-600 mb-2">Dữ liệu lưu dạng Chuỗi Thời Gian: <code>tên_chỉ_số{nhãn="a"} giá_trị timestamp</code></p>
+                    </div>
+                    
+                    <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">2. Grafana (Hiển thị UI & Cảnh báo)</h4>
+                        <p class="text-[12px] text-slate-600 mb-2">Grafana móc nguồn vào Prometheus, dùng ngôn ngữ <strong>PromQL</strong> để vẽ biểu đồ.</p>
+                        <p class="text-[11px] text-slate-500 border-l-2 border-orange-400 pl-2 bg-orange-50 p-2 rounded"><strong>Tip cho dân Lười:</strong> Lên <a href="https://grafana.com/grafana/dashboards/" target="_blank" class="text-orange-600 underline">Thư viện Grafana</a>, search "MySQL Exporter" (VD ID: 7362), paste vào Grafana là có ngay Dashboard ngầu đét. Thêm chức năng <strong>Alerting</strong>: Gửi tin nhắn Telegram/Slack nếu CPU DB vượt quá 90%.</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 rounded-xl overflow-hidden shadow-sm mb-6 group cursor-pointer" onclick="copyCode(this)">
+                    <div class="bg-slate-800 px-4 py-2 border-b border-slate-700">
+                        <h4 class="text-green-400 font-bold text-sm font-mono">// PromQL: Các câu truy vấn Sống còn cho Database</h4>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div>
+                            <p class="text-[11px] text-slate-400 mb-1">1. Đếm số lượng Query chậm (Slow Queries) sinh ra MỖI GIÂY (QPS) trong vòng 5 phút qua</p>
+                            <code class="text-[12px] text-sky-400 font-mono">rate(mysql_global_status_slow_queries[5m])</code>
+                            <p class="text-[10px] text-red-400 mt-1">-> Nếu biểu đồ cột này > 0 và tăng dựng đứng, DB của bạn đang kẹt cứng (Missing Index / Lock).</p>
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-slate-400 mb-1">2. Số lượng Connection đang MỞ và chiếm dụng</p>
+                            <code class="text-[12px] text-sky-400 font-mono">mysql_global_status_threads_connected</code>
+                            <p class="text-[10px] text-red-400 mt-1">-> Trạm max_connections thì App sập (Thường do lập trình viên quên đóng kết nối Pool).</p>
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-slate-400 mb-1">3. Tính % Tỉ lệ Cache Hit của Redis (Tuyệt chiêu)</p>
+                            <code class="text-[12px] text-sky-400 font-mono">rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m])) * 100</code>
+                            <p class="text-[10px] text-red-400 mt-1">-> Nếu % Hit Rate < 50%, Redis của bạn vô dụng, Backend đang chọc thủng Cache xuống DB quá nhiều.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm border-l-4 border-l-red-500">
+                    <div class="bg-slate-100 px-4 py-3 border-b border-slate-200">
+                        <h4 class="font-bold text-slate-800 text-sm">🚨 Khi DB có biến, hãy nhìn vào 3 biểu đồ này đầu tiên:</h4>
+                    </div>
+                    <ul class="text-[12px] text-slate-600 space-y-3 p-4">
+                        <li><strong>Disk IOPS / Disk Wait:</strong> Tốc độ Đọc/Ghi ổ cứng. Database là trùm ngốn ổ cứng. Nếu Disk Wait quá cao, nâng cấp CPU cũng vô dụng, bạn phải đổi sang ổ SSD xịn hơn hoặc bắt đầu chia nhỏ DB (Sharding).</li>
+                        <li><strong>Replication Lag (Trễ đồng bộ):</strong> Khi bạn chạy 1 Master (Ghi) và nhiều Slave (Đọc). Nếu Slave đồng bộ chậm 5s -> User vừa thêm vào giỏ hàng xong, F5 lại giỏ hàng thấy biến mất (vì hệ thống lỡ đọc ở con Slave chưa đồng bộ xong).</li>
+                        <li><strong>Connection / Thread Pool:</strong> Đường ống nối vào DB bị nghẽn.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- KAFKA SECTION (NEW) -->
+            <div class="mb-4 bg-teal-50 text-teal-900 p-4 rounded-xl border border-teal-200 flex items-start gap-4 glow-kafka">
+                <div class="text-3xl">🚀</div>
+                <div>
+                    <h2 class="font-bold text-lg mb-1 text-teal-700">Message Queue: Apache Kafka & Lầm tưởng thú vị</h2>
+                    <p class="text-sm">Khi hệ thống lớn, các Microservices không nên gọi HTTP trực tiếp cho nhau (nếu một thằng chết, cả đám chờ mòn mỏi). Ta dùng "Hộp thư bưu điện" đứng ở giữa. Thằng A thả thư vào Hộp, thằng B rảnh rỗi mới tới lấy thư đọc (Bất đồng bộ - Asynchronous).</p>
+                </div>
+            </div>
+
+            <section id="kafka-basics" class="mb-14 scroll-mt-24">
+                <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm mb-6 flex flex-col md:flex-row gap-4">
+                    <div class="w-full md:w-1/4 flex flex-col items-center justify-center border-r border-slate-100 pr-4">
+                        <div class="text-4xl mb-2">🤔</div>
+                        <h4 class="font-bold text-slate-800 text-sm text-center">Captcha vs Kafka?</h4>
+                    </div>
+                    <div class="w-full md:w-3/4">
+                        <p class="text-[13px] text-slate-600 mb-2">Có vẻ như bạn đang nghe nhầm hoặc gõ nhầm. Hai khái niệm này nằm ở 2 thái cực hoàn toàn khác nhau:</p>
+                        <ul class="text-[12px] text-slate-600 space-y-2 list-disc pl-4">
+                            <li><strong>CAPTCHA:</strong> (Mã chống Bot). Cái ô đánh dấu <span class="text-blue-600 italic">"I'm not a robot"</span> ở giao diện FE. Nó không liên quan gì đến DB/Backend System Design.</li>
+                            <li><strong>Apache Kafka:</strong> (Có thể bạn gõ nhầm "Apache" thành Capcha). Là hệ thống xử lý Event/Message khổng lồ. <strong>Hoặc</strong> bạn muốn so sánh Kafka với <strong>RabbitMQ</strong> (một Message Broker rất nổi tiếng).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><span class="text-teal-700">#</span> Tư duy Kiến trúc Apache Kafka</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-white border border-slate-200 p-4 rounded-lg shadow-sm">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2 text-teal-700">Khái niệm cốt lõi</h4>
+                        <ul class="text-[12px] text-slate-600 space-y-2 list-none">
+                            <li>📬 <strong>Topic (Chủ đề):</strong> Giống như cái ống nước. Service A bắn sự kiện <code>order_created</code> vào ống này.</li>
+                            <li>📦 <strong>Partition (Phân vùng):</strong> 1 Topic chia ra thành nhiều Partition nhỏ để chạy song song (Scale ngang). Kafka lưu data trực tiếp trên Ổ cứng HDD thành các file Log liên tiếp.</li>
+                            <li>👷 <strong>Producer / Consumer:</strong> Người bắn tin nhắn / Người đọc tin nhắn.</li>
+                            <li>🔖 <strong>Offset:</strong> Dấu trang (Bookmark). Consumer đọc tới dòng 100 thì đánh dấu Offset=100. Tắt máy mở lại, nó đọc tiếp từ 101.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white border-l-4 border-l-teal-500 border border-slate-200 p-4 rounded-lg shadow-sm">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2 text-teal-700">Kafka vs RabbitMQ</h4>
+                        <p class="text-[12px] text-slate-600 mb-2">Nếu nãy giờ bạn định so sánh 2 ông trùm này, thì đây là sự khác biệt lớn nhất:</p>
+                        <ul class="text-[12px] text-slate-600 space-y-2 list-disc pl-4">
+                            <li><strong>RabbitMQ (Smart Broker, Dumb Consumer):</strong> Hàng đợi thông minh. Thằng gửi gửi thư, RabbitMQ chủ động dí thư vào mặt thằng nhận. Nhận xong, thư bị <strong>XÓA NGAY LẬP TỨC</strong> khỏi bộ nhớ. Rất tốt cho hệ thống Transactional, Task queue, gửi Email.</li>
+                            <li><strong>Apache Kafka (Dumb Broker, Smart Consumer):</strong> Hàng đợi ngu ngốc. Kafka chỉ lưu tin nhắn vào ổ cứng (giữ đó 7 ngày không xóa). Các Consumer phải TỰ VÁC MẶT TỚI ĐỌC (Pull) và tự nhớ vị trí đọc. Siêu nhanh, xử lý hàng triệu data/giây, dùng cho BigData, Tracking User Action, Log.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 transform translate-y-20 opacity-0 bg-slate-800 text-white px-4 py-2 rounded shadow-lg transition-all duration-300 z-50 flex items-center gap-2">
+        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        <span>Đã copy code!</span>
+    </div>
+
+    <script>
+        // Copy functionality
+        function copyCode(element) {
+            let codeText = '';
+            const codeEl = element.querySelector('pre') || element.querySelector('code');
+            if (codeEl) {
+                codeText = codeEl.innerText || codeEl.textContent;
+            } else if (element.tagName.toLowerCase() === 'code' || element.tagName.toLowerCase() === 'pre') {
+                codeText = element.innerText;
+            }
+            if (!codeText) return;
+
+            let cleanCode = codeText.replace(/^\$\s/gm, '').trim();
+
+            // Fallback sử dụng document.execCommand do iframe block navigator.clipboard
+            const textArea = document.createElement("textarea");
+            textArea.value = cleanCode;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast();
+            } catch (err) {
+                console.error('Không thể copy text', err);
+            }
+            textArea.remove();
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2000);
+        }
+
+        // Scroll spy for sidebar with group highlighting
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (scrollY >= sectionTop - 150) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active-overview', 'active-mysql', 'active-pg', 'active-sqlserver', 'active-mongo', 'active-dbeaver', 'active-redis', 'active-graph', 'active-monitor', 'active-kafka');
+                    const group = link.getAttribute('data-group');
+                    
+                    if (link.getAttribute('href').includes(current) && current !== '') {
+                        if(group === 'overview') link.classList.add('active-overview');
+                        if(group === 'mysql') link.classList.add('active-mysql');
+                        if(group === 'pg') link.classList.add('active-pg');
+                        if(group === 'sqlserver') link.classList.add('active-sqlserver');
+                        if(group === 'mongo') link.classList.add('active-mongo');
+                        if(group === 'dbeaver') link.classList.add('active-dbeaver');
+                        if(group === 'redis') link.classList.add('active-redis');
+                        if(group === 'graph') link.classList.add('active-graph');
+                        if(group === 'monitor') link.classList.add('active-monitor');
+                        if(group === 'kafka') link.classList.add('active-kafka');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
